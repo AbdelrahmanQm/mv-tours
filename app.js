@@ -14,5 +14,5 @@ app.use(morgan('dev'));
 app.use('/api/v1/users', userRoutes);
 
 // Using created Middlewares
-app.use(globalErrorHandler);
+//app.use(globalErrorHandler);
 module.exports = app;

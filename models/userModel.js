@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -26,17 +27,44 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: [8, 'Password cannot be shorter than 8 characters!'],
     required: [true, 'You must provide a password'],
+    select: false,
   },
   passwordConfirm: {
     type: String,
     minlength: [8, 'Password cannot be shorter than 8 characters!'],
     required: [true, 'You must provide a password'],
+    validate: {
+      validator: function (cp) {
+        return cp === this.password;
+      },
+      message: 'Password confirmation is incorrect!',
+    },
+    select: false,
   },
   profilePhoto: {
     type: String,
     default: 'Default user image',
   },
 });
+
+// Password Encryption (While creating user);
+userSchema.pre('save', async function (next) {
+  // Works only when password is modified
+  if (!this.isModified('password')) return next();
+
+  // Encrypting password
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
+});
+
+// Comparing password to ecrypted password
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 

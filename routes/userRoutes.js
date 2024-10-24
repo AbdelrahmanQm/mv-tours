@@ -18,7 +18,7 @@ router.post(
 
 /* ========== Admin Routes ========== */
 router.use(authController.protect);
-router.use(authController.restricktTo('admin'));
+router.use(authController.restrictTo('admin'));
 router
   .route('/')
   .get(userController.getAllUsers)

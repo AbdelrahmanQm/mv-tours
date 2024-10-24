@@ -100,7 +100,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 // RestricktTo: Used to restrick certain routes to certain users by role ['user','admin','guide','agent','editor']
 
-exports.restricktTo =
+exports.restrictTo =
   (...roles) =>
   (req, res, next) => {
     // roles are added as arguments (ex: restricktTo('admin','editor'))

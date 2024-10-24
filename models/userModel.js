@@ -45,6 +45,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'Default user image',
   },
+  createdAt: Date,
+});
+
+// Middleware to set the createdAt field
+userSchema.pre('save', function (next) {
+  this.createdAt = Date.now();
+  next();
 });
 
 // Password Encryption (While creating user);

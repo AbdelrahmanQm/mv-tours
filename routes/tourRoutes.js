@@ -4,14 +4,11 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(tourController.getAllTours)
-  .post(
-    authController.protect,
-    authController.restrictTo('admin', 'editor'),
-    tourController.createTour,
-  );
+router.route('/').get(tourController.getAllTours).post(
+  authController.protect,
+  // authController.restrictTo('admin', 'editor'),
+  tourController.createTour,
+);
 
 router
   .route('/:id')

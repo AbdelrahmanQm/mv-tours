@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const globalErrorHandler = require('./controllers/errorController');
 const userRoutes = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
+const locationRoutes = require('./routes/locationRoutes');
 
 // Creating Express App
 const app = express();
@@ -14,6 +15,7 @@ app.use(morgan('dev'));
 // Route handlers
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
+app.use('/api/v1/location', locationRoutes);
 
 // Using created Middlewares
 //app.use(globalErrorHandler);

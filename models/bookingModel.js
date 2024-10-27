@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const bookingSchema = mongoose.Schema({
   tour: {
@@ -9,7 +10,30 @@ const bookingSchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
-    required: [true, 'User not found!'],
+  },
+  firstName: {
+    type: String,
+    required: [true, 'You must provide your first name!'],
+  },
+  lastName: {
+    type: String,
+    required: [true, 'You must provide your last name!'],
+  },
+  email: {
+    type: String,
+    required: [true, 'You must provide your email address!'],
+    validate: {
+      validator: validator.isEmail,
+      message: 'Email address is invalid!',
+    },
+  },
+  phone: {
+    type: String,
+    required: [true, 'You must provide a phone number!'],
+  },
+  country: {
+    type: String,
+    required: true,
   },
   startDate: {
     type: Date,
@@ -19,6 +43,20 @@ const bookingSchema = mongoose.Schema({
     type: Number,
     required: [true, 'You must provide the number of persons!'],
   },
+  payedAmount: {
+    type: Number,
+    default: 0,
+  },
+  status: {
+    type: String,
+    enum: ['cancelation requester', 'canceled', 'eligible', 'done'],
+    default: 'eligible',
+  },
+});
+
+bookingSchema.pre(/^find/, function (next) {
+  this.populate('tour').populate('user');
+  next();
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);

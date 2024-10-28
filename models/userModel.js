@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -51,6 +52,10 @@ const userSchema = new mongoose.Schema({
   },
   createdAt: Date,
   bookings: [{ type: mongoose.Schema.ObjectId, ref: 'Booking' }],
+  passwordResetToken: {
+    type: String,
+  },
+  passwordResetExpiresIn: Date,
 });
 
 // Middleware to set the createdAt field
@@ -76,6 +81,20 @@ userSchema.methods.correctPassword = async function (
   userPassword,
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// Create password reset token and store it in the user's database
+userSchema.methods.createPasswordResetToken = function () {
+  // Creating 32 Byte random number in hexadicimel
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  // Hashing and storing the hashed version of the resetToken to the database
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  // Creating the reset token expiry date after 10 minutes from creating
+  this.passwordResetExpiresIn = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);

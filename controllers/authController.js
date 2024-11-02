@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const createToken = (id) =>
   jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -66,10 +67,6 @@ exports.getMe = (req, res, next) => {
 };
 // User self Update
 exports.updateMe = 'updateMe';
-// User Forgot Password
-exports.forgotUserPassword = 'forgotPassword';
-// User Reset Password
-exports.resetUserPassword = 'forgotPassword';
 
 /* MiddleWares */
 
@@ -112,3 +109,53 @@ exports.restrictTo =
     }
     next();
   };
+
+// Forgot password Route handler
+
+exports.forgotUserPassword = catchAsync(async (req, res, next) => {
+  // Search for user in database
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError('There is no user with this email', 401));
+  }
+  // create a password reset token that works for 10 minutes
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+  // Temperorly sending the reset token as a res.json() and later will be sent by email
+  res.status(200).json({
+    status: 'success',
+    resetToken: resetToken,
+  });
+});
+
+// Reset Password Route Handler
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  console.log(req.params);
+  //1) Get the user by token
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpiresIn: { $gt: Date.now() },
+  });
+  console.log(hashedToken);
+  if (!user) {
+    return next(
+      new AppError('Password reset code is either invalid or expired!', 400),
+    );
+  }
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpiresIn = undefined;
+  await user.save();
+  res.status(200).json({
+    status: 'success',
+    message: 'Password has been updated!',
+  });
+  //2)
+  //3)
+  //4)
+});

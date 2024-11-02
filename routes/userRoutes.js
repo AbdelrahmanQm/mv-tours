@@ -13,8 +13,8 @@ router.post(
   authController.getMe,
   userController.getUser,
 );
-// router.post('/forgotPassword', authController.forgotUserPassword);
-// router.post('/resetPassword', authController.resetUserPassword);
+router.post('/forgotPassword', authController.forgotUserPassword);
+router.post('/resetPassword/:token', authController.resetPassword);
 
 /* ========== Admin Routes ========== */
 // router.use(authController.protect);

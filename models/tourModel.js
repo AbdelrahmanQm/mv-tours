@@ -62,6 +62,10 @@ const tourShcema = new mongoose.Schema({
     required: [true, 'A tour must have a type either day or package'],
     enum: ['day', 'package'],
   },
+  tourStyle: {
+    type: String,
+    required: [true, 'A tour must have a style'],
+  },
   ratingsAverage: {
     type: Number,
     default: 4.5,
@@ -96,7 +100,7 @@ const tourShcema = new mongoose.Schema({
     default: 'default tour cover image',
   },
   photos: [String],
-  destinations: [String],
+  locations: [String],
   addOns: [
     {
       addOn: {
@@ -113,6 +117,10 @@ const tourShcema = new mongoose.Schema({
       itinrary: String,
     },
   ],
+  provider: {
+    type: String,
+    default: 'TBD',
+  },
 });
 
 // Middleware to set createAt

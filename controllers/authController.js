@@ -21,6 +21,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: 'user',
   };
   const user = await User.create(userInfo);
+  req.user = user;
   // Creating User token
   const token = createToken(user._id);
   res.status(200).json({

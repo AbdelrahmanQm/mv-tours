@@ -4,6 +4,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const userRoutes = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
 const locationRoutes = require('./routes/locationRoutes');
+const agentRoutes = require('./routes/agentRoutes');
 
 // Creating Express App
 const app = express();
@@ -16,6 +17,7 @@ app.use(morgan('dev'));
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/location', locationRoutes);
+app.use('/api/v1/agent', agentRoutes);
 
 // Using created Middlewares
 //app.use(globalErrorHandler);

@@ -17,8 +17,8 @@ router.post(
 // router.post('/resetPassword', authController.resetUserPassword);
 
 /* ========== Admin Routes ========== */
-router.use(authController.protect);
-router.use(authController.restrictTo('admin'));
+// router.use(authController.protect);
+// router.use(authController.restrictTo('admin'));
 router
   .route('/')
   .get(userController.getAllUsers)

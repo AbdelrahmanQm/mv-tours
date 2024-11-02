@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A user must have a last name!'],
   },
+  phone: {
+    type: Number,
+    required: [true, 'You must provide a phone number'],
+  },
   email: {
     type: String,
     required: [true, 'A user must have an email!'],
@@ -46,6 +50,7 @@ const userSchema = new mongoose.Schema({
     default: 'Default user image',
   },
   createdAt: Date,
+  bookings: [{ type: mongoose.Schema.ObjectId, ref: 'Booking' }],
 });
 
 // Middleware to set the createdAt field
